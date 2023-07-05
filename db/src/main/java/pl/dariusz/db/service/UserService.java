@@ -1,14 +1,17 @@
 package pl.dariusz.db.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.dariusz.db.repository.UserRepository;
 import pl.dariusz.db.user.User;
+import pl.dariusz.db.user.UserSearchable;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -20,50 +23,28 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+    public Page<User> findUsers(Pageable pageable, UserSearchable searchable) {
+        return userRepository.findAllWithSearchAndPagination(pageable, searchable);
     }
 
-    public List<User> getUsersByFirstName(String name){
-        return userRepository.findByFirstNameIgnoreCase(name);
+    public Optional<User> getUserById(Long id){
+        return userRepository.findById(id);
     }
 
-    public List<User> getUsersByLastName(String name){
-        return userRepository.findByLastNameIgnoreCase(name);
+    public ResponseEntity<String> addUser(User user){
+        userRepository.save(user);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(user.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 
-    public List<User> getUsersSortedByAge(boolean ascending) {
-        String sortBy = ascending ? "age" : "age desc";
-        return userRepository.findAll(Sort.by(sortBy));
-    }
-
-    public List<User> getUsersSortedByFirstName(String sortOrder) {
-        Sort sort = Sort.by("firstName");
-        if (sortOrder.equalsIgnoreCase("desc")) {
-            sort = sort.descending();
-        } else {
-            sort = sort.ascending();
-        }
-        return userRepository.findAll(sort);
-    }
-
-    public List<User> getUsersFilteredByAge(int minAge, int maxAge) {
-        return userRepository.findByAgeBetween(minAge, maxAge);
-    }
-
-    public List<User> getUsersFilteredByGender(String gender) {
-        return userRepository.findByGender(gender);
-    }
-
-    public Page<User> getUsersPaged(Pageable pageable) {
-        return userRepository.findAll(pageable);
-    }
-
-    public User addUser(User user){
-        return userRepository.save(user);
-    }
-
-    public void deleteUser(Long id){
+    public ResponseEntity<String> deleteUser(Long id){
         userRepository.deleteById(id);
+        return ResponseEntity.ok("User of id: " + id + " has been deleted");
     }
+
+
 }
