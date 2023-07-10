@@ -22,6 +22,6 @@ public class User {
     private String gender;
 
     @Column(name = "AGE")
-    private int age;
+    private Integer age;
 
 }

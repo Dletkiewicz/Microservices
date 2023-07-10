@@ -23,9 +23,9 @@ public class UserDto {
     private String gender;
 
     @JsonProperty("age")
-    private int age;
+    private Integer age;
 
-    public UserDto(String firstName, String lastName, String gender, int age) {
+    public UserDto(String firstName, String lastName, String gender, Integer age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;

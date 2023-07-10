@@ -12,11 +12,5 @@ import pl.dariusz.db.user.UserSearchable;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT u FROM User u WHERE"
-            + " (:#{#searchable.firstName} IS NULL OR u.firstName = :#{#searchable.firstName})"
-            + " AND (:#{#searchable.lastName} IS NULL OR u.lastName = :#{#searchable.lastName})"
-            + " AND (:#{#searchable.gender} IS NULL OR u.gender = :#{#searchable.gender})"
-            + " AND (:#{#searchable.age} = 0 OR u.age >= :#{#searchable.age})")
-    Page<User> findAllWithSearchAndPagination(Pageable pageable, @Param("searchable") UserSearchable searchable);
 
 }

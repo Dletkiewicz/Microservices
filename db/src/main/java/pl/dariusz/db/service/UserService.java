@@ -23,8 +23,13 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Page<User> findUsers(Pageable pageable, UserSearchable searchable) {
-        return userRepository.findAllWithSearchAndPagination(pageable, searchable);
+    public Page<User> getUsersByExample(User user, Pageable pageable){
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreCase()
+                .withIgnoreNullValues()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Example<User> userExample = Example.of(user, matcher);
+        return userRepository.findAll(userExample, pageable);
     }
 
     public Optional<User> getUserById(Long id){

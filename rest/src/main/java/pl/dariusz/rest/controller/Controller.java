@@ -23,7 +23,14 @@ public class Controller {
     private RestTemplate restTemplate;
 
     @GetMapping("/users")
-    public Page<UserDto> getUsers(Pageable pageable, UserSearchable searchable) {
+    public Page<UserDto> getUsers(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String gender,
+            @RequestParam(required = false) Integer age,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "age,asc") String[] sort) {
         ResponseEntity<Page<UserDto>> response = restTemplate.exchange(
                 "http://db/db/v1/users",
                 HttpMethod.GET,
@@ -57,7 +64,7 @@ public class Controller {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> addUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         ResponseEntity<String> response = restTemplate.exchange(
                 "http://db/db/v1/users/{id}",
                 HttpMethod.DELETE,
